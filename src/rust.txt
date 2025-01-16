@@ -1,0 +1,59 @@
+// Prevents additional console window on Windows in release, DO NOT REMOVE!!
+#![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
+
+use std::fs;
+use std::path::PathBuf;
+use tauri::{AppHandle, Manager};
+
+#[tauri::command]
+fn app_dir(app: AppHandle) -> String {
+    app.path()
+        .app_local_data_dir()
+        .expect("Failed to retrieve local data directory path")
+        .to_string_lossy()
+        .to_string()
+}
+
+#[tauri::command]
+async fn create_folder(app: AppHandle, folder_name: String) -> Result<String, String> {
+    let app_dir = app
+        .path()
+        .app_local_data_dir()
+        .map_err(|e| format!("Не удалось получить директорию приложения: {}", e))?;
+
+    let folder_path = app_dir.join(folder_name);
+
+    fs::create_dir_all(&folder_path).map_err(|e| format!("Ошибка создания папки: {}", e))?;
+
+    Ok(folder_path.to_string_lossy().to_string())
+}
+
+#[tauri::command]
+async fn save_recording(
+    _app: AppHandle,
+    recording: Vec<u8>,
+    filename: String,
+    path: String,
+) -> Result<(), String> {
+    println!("Сохранение записи... Размер: {} байт", recording.len());
+    let path = PathBuf::from(path).join(filename);
+    println!("Путь сохранения: {:?}", path);
+
+    fs::write(&path, recording).map_err(|e| format!("Ошибка сохранения записи: {}", e))?;
+
+    println!("Запись успешно сохранена");
+    Ok(())
+}
+
+fn main() {
+    tauri::Builder::default()
+        .plugin(tauri_plugin_dialog::init())
+        .invoke_handler(tauri::generate_handler![
+            app_dir,
+            create_folder,
+            save_recording
+        ])
+        .run(tauri::generate_context!())
+        .expect("Error while running Tauri application");
+    obsclone_lib::run()
+}

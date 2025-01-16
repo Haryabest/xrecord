@@ -1,0 +1,253 @@
+.container {
+    position: relative;
+    width: 420px;
+    background-color: #383838;
+    border-radius: 10px;
+    border: 4px solid #8964B6;
+    border-top: 36px solid #8964B6;
+    padding: 10px;
+    height: 346px;
+    font-family: 'Segoe UI', sans-serif;
+    color: #FFFFFF;
+  }
+  
+  .borderText {
+    position: absolute;
+    top: -28px;
+    left: 50%;
+    font-family: 'Segoe UI', sans-serif;
+    transform: translateX(-50%);
+    background-color: #8964B6;
+    color: #FFFFFF;
+    font-weight: bold;
+    font-size: 14px;
+    padding: 2px 8px;
+    border-radius: 4px;
+  }
+  
+  .content {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    font-family: 'Segoe UI', sans-serif;
+
+    height: 100%;
+  }
+  
+  .sourceBlock {
+    flex: 1;
+    background-color: #2b2b2b;
+    border-radius: 10px;
+    padding: 16px;
+    font-size: 14px;
+    display: flex;
+    max-height: 230px;
+
+    font-family: 'Segoe UI', sans-serif;
+
+    color: #a9a9a9;
+  }
+  
+  .divider {
+    border: none;
+    height: 1px;
+    background-color: #8964B6;
+    margin: 10px 0;
+  }
+  
+  .buttonGroupBottom {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    background-color: #2b2b2b;
+    padding: 10px;
+    border-radius: 10px;
+  }
+  
+  .iconButtonWrapper {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .tooltip {
+    position: absolute;
+    bottom: 50px;
+    background-color: #8964B6;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 12px;
+    white-space: nowrap;
+    font-family: 'Segoe UI', sans-serif;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.2s, transform 0.2s;
+    pointer-events: none;
+  }
+  
+  .iconButtonWrapper:hover .tooltip {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  
+  .iconButton {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 40px;
+    height: 40px;
+    background-color: #8964B6;
+    border: none;
+    border-radius: 5px;
+    color: #fff;
+    cursor: pointer;
+    transition: transform 0.3s, box-shadow 0.3s, background-color 0.3s;
+  }
+  
+  .iconButton:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    background-color: #383838;
+
+  }
+  
+  .iconButton:active {
+    transform: scale(0.95);
+  }
+  .icon {
+    width: 20px;
+    height: 20px;
+  }
+  
+/* Modal Styles */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modalContent {
+  background-color: #000000;
+  padding: 40px;
+  border-radius: 15px;
+  width: 400px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  position: relative;
+}
+
+.closeButton {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-size: 24px;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.closeButton:hover {
+  color: #8964B6; /* Цвет при наведении */
+}
+
+.windowButton {
+  display: block; /* Заставляем кнопку занимать всю ширину контейнера */
+  padding: 10px;
+  background-color: #000000;
+  border: none;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  border-radius: 5px;
+  /* Стиль для текста внутри кнопки */
+  text-overflow: ellipsis; /* Добавляем многоточие, если текст не помещается */
+  overflow: hidden; /* Обрезаем текст, который не помещается */
+  white-space: nowrap; /* Не даем тексту переноситься */
+}
+
+.windowButton:hover {
+  background-color: #2c2c2c;
+}
+
+/* Обновление стилей для списка окон */
+.modalContent ul {
+  max-height: 300px; /* Максимальная высота списка */
+  overflow-y: auto; /* Включаем прокрутку по вертикали */
+  padding-right: 10px; /* Немного отступа, чтобы полосы прокрутки не перекрывали текст */
+  margin: 0; /* Убираем отступы */
+}
+
+.modalContent ul::-webkit-scrollbar {
+  width: 6px; /* Размер полосы прокрутки */
+}
+
+.modalContent ul::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.5); /* Цвет ползунка */
+  border-radius: 10px;
+}
+
+.modalContent ul::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(0, 0, 0, 0.8); /* Цвет при наведении на ползунок */
+}
+
+
+.sourcesList {
+  max-height: 170px; /* Максимальная высота списка источников */
+  overflow-y: scroll; /* Включаем вертикальную прокрутку, но оставляем ее скрытой */
+}
+
+.sourcesList::-webkit-scrollbar {
+  width: 0px; /* Убираем полоску прокрутки */
+  height: 0px; /* Для горизонтальной полосы */
+}
+
+.sourcesList::-webkit-scrollbar-thumb {
+  background-color: transparent; /* Скрываем сам индикатор прокрутки */
+}
+
+.sourcesList::-webkit-scrollbar-track {
+  background: transparent; /* Скрываем трек прокрутки */
+}
+
+.sourceItem {
+  width: 360px; /* Задаем ширину на 100% от родительского элемента, если нужно можно задать конкретное значение */
+  height: 40px; /* Фиксированная высота элемента */
+  padding: 10px;
+  background-color: #7A6A8E;
+  margin-bottom: 5px;
+  border-radius: 5px;
+  font-family: 'Segoe UI', serif;
+  cursor: pointer;
+  color: #fff;
+  transition: background-color 0.3s ease;
+  box-sizing: border-box; /* Включаем отступы и границы в размеры */
+}
+
+.sourceItem:hover {
+  background-color: #8b78a3;
+}
+
+.sourceItem.active {
+  background-color: #735894; /* Цвет для активного элемента */
+  border-color: #66498a;
+}
+
+
+input[type="text"] {
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', serif;
+  color: #ffffff;
+  width: 100%;
+  background-color: #735894;
+}

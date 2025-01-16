@@ -1,0 +1,133 @@
+.container {
+    position: relative;
+    width: 420px;
+    background-color: #383838;
+    border-radius: 10px;
+    border: 4px solid #8964B6;
+    border-top: 36px solid #8964B6;
+    padding: 10px;
+    height: 346px;
+
+    font-family: Arial, sans-serif;
+    color: #FFFFFF;
+}
+
+
+.borderText {
+    position: absolute;
+    top: -28px;
+    left: 50%;
+    font-family: 'Segoe UI', sans-serif;
+    transform: translateX(-50%);
+    background-color: #8964B6;
+    color: #FFFFFF;
+    font-weight: bold;
+    font-size: 14px;
+    padding: 2px 8px;
+    border-radius: 4px;
+}
+
+.content {
+    display: flex;
+    flex-direction: column;
+    font-family: 'Segoe UI', sans-serif;
+
+    gap: 16px;
+    height: 100px;
+}
+
+.block {
+    background-color: #2b2b2b;
+    border-radius: 10px;
+    padding: 10px;
+}
+
+.item {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.label {
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.bar {
+    position: relative;
+    height: 20px;
+    background-color: #606060;
+    border-radius: 5px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+}
+
+.fill {
+    height: 100%;
+    border-radius: 5px 0 0 5px;
+}
+
+.marker {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background-color: #FFFFFF;
+    opacity: 0.5;
+}
+
+.textMarker {
+    position: absolute;
+    top: 25px;
+    font-size: 10px;
+    color: #FFFFFF;
+    transform: translateX(-50%);
+}
+
+.value {
+    font-size: 12px;
+    text-align: right;
+    margin-top: 5px;
+}
+
+.volumeControl {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.volumeIcon {
+    color: #fff;
+    background-color: #8964B6;
+    width: auto; /* Автоматическая ширина для учета отступов */
+    height: auto; /* Автоматическая высота для учета отступов */
+    padding: 6px; /* Внутренние отступы */
+    border-radius: 5px; /* Округленные углы */
+    display: flex; /* Выравнивание контента внутри */
+    justify-content: center; /* Центрирование по горизонтали */
+    align-items: center; /* Центрирование по вертикали */
+    cursor: pointer; /* Курсор в виде указателя */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Легкая тень для кнопочного эффекта */
+    transition: transform 0.2s, box-shadow 0.2s; /* Плавная анимация */
+}
+
+.volumeIcon:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Увеличение тени при наведении */
+    transform: scale(1.05); /* Легкое увеличение при наведении */
+}
+
+.volumeIcon:active {
+    transform: scale(0.95); /* Легкое уменьшение при клике */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Возврат к исходной тени */
+}
+
+
+.slider {
+    flex-grow: 1;
+}
+
+.volumeValue {
+    color: #ffffff;
+    font-size: 14px;
+}

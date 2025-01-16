@@ -1,0 +1,8 @@
+.container {
+    display: flex;
+    align-items: center;
+    justify-content: center; /* Центровка по горизонтали */
+    gap: 65px;
+    background: #2A2A2A;
+  }
+  

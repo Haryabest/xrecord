@@ -1,0 +1,211 @@
+import React, { useEffect, useRef, useState } from "react";
+import { invoke } from "@tauri-apps/api/core";
+import { open } from "@tauri-apps/plugin-dialog";
+import Toolbar from "./Toolbar";
+
+const ScreenRecorder: React.FC = () => {
+  const videoRef = useRef<HTMLVideoElement>(null); // Реф для видео
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null); // Реф для MediaRecorder
+  const [isRecording, setIsRecording] = useState(false); // Состояние записи
+  const [folderPath, setFolderPath] = useState<string | null>(null); // Путь к папке сохранения
+  const chunksRef = useRef<Blob[]>([]); // Буфер для записываемых данных
+  const mainFolderName = "4kvishmat"; // Название основной папки
+
+  const getScreenStream = async () => {
+    try {
+      // Убедитесь, что folderPath содержит корректный путь
+      const folderPath = "C:/Users/dmitr/Downloads/screen_recording.mp4"; // Пример пути
+      const outputPath = folderPath;
+  
+      if (!outputPath) {
+        throw new Error("Путь для сохранения не был задан.");
+      }
+  
+      // Вызовите команду record_screen с указанным путем для сохранения
+      await invoke("record_screen", { outputPath });
+  
+      // Получаем источники экрана (пример для полноты, возможно, не требуется второй вызов)
+      const sources = await invoke("record_screen") as Array<{ id: string }>;
+      const screenId = sources[0]?.id;
+  
+      if (!screenId) {
+        alert("Не удалось найти экран для захвата.");
+        return;
+      }
+  
+      // Запрос потока с экрана
+      const stream = await navigator.mediaDevices.getDisplayMedia({
+        video: {
+          width: { ideal: 1920 },
+          height: { ideal: 1080 },
+          frameRate: { ideal: 30 },
+        },
+      });
+  
+      // Устанавливаем поток на видео элемент
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+        videoRef.current.play();
+      }
+    } catch (error) {
+      console.error("Ошибка при захвате экрана:", error);
+      alert("Ошибка при захвате экрана: " + error);
+    }
+  };
+  
+  // Инициализация папки и потока
+  useEffect(() => {
+    const initializeFolder = async () => {
+      try {
+        const folderPath = (await invoke("create_folder", { folderName: mainFolderName })) as string;
+        setFolderPath(folderPath);
+        console.log("Папка создана или уже существует:", folderPath);
+      } catch (error) {
+        console.error("Ошибка при создании папки:", error);
+      }
+    };
+
+    // Инициализация потока с экрана
+    getScreenStream();
+
+    // Создание папки для записи
+    initializeFolder();
+  }, []);
+
+  // Открытие проводника для выбора папки
+  const openFolderDialog = async () => {
+    try {
+      const selectedFolderPath = await open({ directory: true });
+      if (selectedFolderPath) {
+        setFolderPath(selectedFolderPath as string);
+        console.log("Выбранная папка:", selectedFolderPath);
+      } else {
+        alert("Папка не была выбрана.");
+      }
+    } catch (error) {
+      console.error("Ошибка при открытии проводника:", error);
+      alert("Ошибка при открытии проводника: " + error);
+    }
+  };
+
+  // Начало записи
+  const startRecording = async () => {
+    if (!folderPath) {
+      alert("Пожалуйста, выберите папку для сохранения видео.");
+      return;
+    }
+
+    try {
+      const stream = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: true });
+      chunksRef.current = []; // Очистка предыдущих данных
+      const mediaRecorder = new MediaRecorder(stream, { mimeType: "video/webm" });
+
+      mediaRecorderRef.current = mediaRecorder;
+
+      mediaRecorder.ondataavailable = (event) => {
+        if (event.data.size > 0) {
+          chunksRef.current.push(event.data);
+        }
+      };
+
+      mediaRecorder.onstop = async () => {
+        stream.getTracks().forEach((track) => track.stop());
+        setIsRecording(false);
+
+        if (chunksRef.current.length > 0) {
+          try {
+            const blob = new Blob(chunksRef.current, { type: "video/webm" });
+            const buffer = await blob.arrayBuffer();
+            const bytes = new Uint8Array(buffer);
+            const fileName = `recording_${Date.now()}.webm`;
+
+            // Сохранение файла с помощью Tauri
+            await invoke("save_recording", {
+              recording: Array.from(bytes),
+              filename: fileName,
+              path: folderPath,
+            });
+
+            alert(`Видео сохранено в папке: ${folderPath}`);
+          } catch (error) {
+            console.error("Ошибка при сохранении видео:", error);
+            alert("Ошибка при сохранении видео: " + error);
+          }
+        }
+      };
+
+      mediaRecorder.start(1000); // Запуск записи с интервалом сохранения в 1 секунду
+      setIsRecording(true);
+    } catch (error) {
+      console.error("Ошибка при доступе к экрану:", error);
+      alert("Ошибка при доступе к экрану: " + error);
+    }
+  };
+
+  // Остановка записи
+  const stopRecording = () => {
+    if (mediaRecorderRef.current && mediaRecorderRef.current.state !== "inactive") {
+      mediaRecorderRef.current.stop();
+    }
+  };
+
+  return (
+    <div className="screen-recorder" style={{ position: "relative", height: "100vh", overflow: "hidden" }}>
+      <Toolbar />
+      <video
+        ref={videoRef}
+        className="video-preview"
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: "100%",
+          objectFit: "cover",
+        }}
+        autoPlay
+        muted
+      />
+      <div className="controls" style={{ position: "absolute", bottom: "20px", left: "20px", zIndex: 10 }}>
+        <button
+          onClick={isRecording ? stopRecording : startRecording}
+          className={isRecording ? "stop" : "start"}
+          style={{
+            padding: "10px 10px",
+            fontSize: "16px",
+            backgroundColor: isRecording ? "#ff4444" : "#44ff44",
+            color: "white",
+            border: "none",
+            borderRadius: "5px",
+            cursor: "pointer",
+          }}
+        >
+          {isRecording ? "Остановить запись" : "Начать запись"}
+        </button>
+        <button
+          onClick={openFolderDialog}
+          style={{
+            padding: "10px 10px",
+            fontSize: "10px",
+            backgroundColor: "#0088ff",
+            color: "white",
+            border: "none",
+            borderRadius: "5px",
+            cursor: "pointer",
+            marginTop: "10px",
+          }}
+        >
+          Выбрать папку для сохранения
+        </button>
+      </div>
+
+      {folderPath && (
+        <p style={{ position: "absolute", bottom: "60px", left: "20px", color: "white" }}>
+          Выбранная папка: {folderPath}
+        </p>
+      )}
+    </div>
+  );
+};
+
+export default ScreenRecorder;
