@@ -16,7 +16,7 @@ interface SourcesPanelProps {
 }
 
 
-const SourcesPanel = ({ onSourcesChange, onSelectSource, videoRef, onStreamChange, selectedSource, onSourceChange}: SourcesPanelProps) => {
+const SourcesPanel = ({ onSourcesChange, onSelectSource, selectedSource, onSourceChange}: SourcesPanelProps) => {
   const [showModal, setShowModal] = useState(false);
   const [sources, setSources] = useState<string[]>([]);
   const [activeSource, setActiveSource] = useState<string | null>(null);
@@ -177,13 +177,6 @@ const SourcesPanel = ({ onSourcesChange, onSelectSource, videoRef, onStreamChang
 
 
 
-  const handleEditChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (editingIndex !== null) {
-      const updatedSources = [...sources];
-      updatedSources[editingIndex] = event.target.value;
-      setSources(updatedSources);
-    }
-  };
 
   const handleEditSave = () => {
     if (editingIndex !== null) {
@@ -209,18 +202,13 @@ const SourcesPanel = ({ onSourcesChange, onSelectSource, videoRef, onStreamChang
     }
   }, [getStreamBySource, onSourceChange]);
 
-  const handleEditKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === "Enter") {
-      handleEditSave();
-    }
-  };
 
   return (
     <div className={styles.container}>
-      <div className={styles.borderText}>Sources</div>
+      <div className={styles.borderText}>Источники</div>
       <div className={styles.content}>
         <div className={styles.sourceBlock}>
-          {!sources.length && <p>Source list will appear here</p>}
+          {!sources.length && <p>Здесь будут ваши источники</p>}
           <ul className={styles.sourcesList}>
             {sources.map((source, index) => (
               <li
