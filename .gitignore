@@ -7,13 +7,9 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-dist
 dist-ssr
 *.local
 node_modules/
-src-tauri
-src-tauri/target/
-dist/
 *.log
 
 
